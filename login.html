@@ -25,13 +25,13 @@
 <!--                    <form> -->
                         <div class="field">
                             <div class="control">
-                                <input name="usuario" name="text" class="input is-large" placeholder="Seu usuário" autofocus="">
+                                <input id="usuario" type="text" class="input is-large" placeholder="Seu usuário" autofocus="">
                             </div>
                         </div>
 
                         <div class="field">
                             <div class="control">
-                                <input name="senha" class="input is-large" type="password" placeholder="Sua senha">
+                                <input id="senha" class="input is-large" type="password" placeholder="Sua senha">
                             </div>
                         </div>
 
@@ -55,11 +55,11 @@
 
 
 
-<script src="https://www.gstatic.com/firebasejs/7.2.3/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/7.2.3/firebase-firestore.js"></script>
-<script src="https://www.gstatic.com/firebasejs/3.1.0/firebase-database.js"></script>
+<script src="https://www.gstatic.com/firebasejs/7.22.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/7.22.1/firebase-analytics.js"></script>
+<script src="https://www.gstatic.com/firebasejs/7.22.1/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/7.22.1/firebase-firestore.js"></script>
 <script>
-    // Your web app's Firebase configuration
     var firebaseConfig = {
         apiKey: "AIzaSyBMasMxL8BhY9OSyNkAmMZqfMtSlaYDEp8",
         authDomain: "weebdario.firebaseapp.com",
@@ -69,12 +69,23 @@
         messagingSenderId: "742261135078",
         appId: "1:742261135078:web:67e5be9399087e69efcd27"
     };
-    // Initialize Firebase
     firebase.initializeApp(firebaseConfig);
-    var database = firebase.database();
 
+    var db = firebase.firestore();
     function login(){
-        firebase.database().ref('usuarios').get().then(doc => {console.log(doc.data)});
+
+        db.collection("usuarios").where("nome", "==", document.getElementById('usuario').value).where("senha", "==", document.getElementById('senha').value)
+            .get()
+            .then(function(querySnapshot) {
+                querySnapshot.forEach(function(doc) {
+                    // doc.data() is never undefined for query doc snapshots
+                    console.log(doc.id, " => ", doc.data());
+                });
+            })
+            .catch(function(error) {
+                console.log("Error getting documents: ", error);
+            });
+
     }
 </script>
 

@@ -47,7 +47,7 @@
                                  <input id="data" class="input is-large" type="text" placeholder="Data de nascimento">
                              </div>
                          </div>
-                         <button onclick="imprimir()"  class="button is-block is-link is-large is-fullwidth">Cadastrar</button>
+                         <button onclick="validar()"  class="button is-block is-link is-large is-fullwidth">Cadastrar</button>
                     <!-- </form> -->
                  </div>
              </div>
@@ -71,23 +71,31 @@
          messagingSenderId: "742261135078",
          appId: "1:742261135078:web:67e5be9399087e69efcd27"
      };
-     // Initialize Firebase
      firebase.initializeApp(firebaseConfig);
-     var database = firebase.database();
+
+     var db = firebase.firestore();
      var user = {};
-     function imprimir() {
+     function validar() {
          console.log(document.getElementById('nome').value);
          user.nome = document.getElementById('nome').value;
          user.usuario = document.getElementById('usuario').value;
          user.senha = document.getElementById('senha').value;
          user.data = document.getElementById('data').value;
+         user.id = makeid();
          registrar()
      }
+     function makeid() {
+         var text = "";
+         var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 
+         for (var i = 0; i < 5; i++)
+             text += possible.charAt(Math.floor(Math.random() * possible.length));
+
+         return text;
+     }
      function registrar(){
-         console.log(user);
-         firebase.database().ref('usuarios/').set(user);
-         document.getElementById("titulo").innerHTML = "MEU PRIMERO titulo";
+         db.collection('usuarios').doc(user.id).set(user);
+         document.location.href = './login.html';
      }
  </script>
  </body>
