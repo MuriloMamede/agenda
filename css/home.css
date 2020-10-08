@@ -10,12 +10,12 @@ body {font-family: Verdana, sans-serif;}
   
 }
 
-.month ul {
+.month ul th{
   margin: 0;
   padding: 0;
 }
 
-.month ul li {
+.month tr td{
   color: black;
   font-size: 40px;
   text-transform: uppercase;
@@ -54,10 +54,10 @@ body {font-family: Verdana, sans-serif;}
   margin: 0;
 }
 
-.days li {
+.days td {
   height: 100px;
   list-style-type: none;
-  display: inline-block;
+  
   width: 13.6%;
   text-align: center;
   margin-bottom: 5px;
@@ -66,7 +66,7 @@ body {font-family: Verdana, sans-serif;}
   color: #777;
 }
 
-.days li .active {
+.days ld .active {
   padding: 30px;
   background:#ffefa0;
   color: black !important
