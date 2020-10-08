@@ -94,8 +94,13 @@
          return text;
      }
      function registrar(){
-         db.collection('usuarios').doc(user.id).set(user);
-         document.location.href = './login.html';
+         db.collection('usuarios').doc(user.id).set(user).then(
+             function () {
+                 document.location.href = './login.html';
+             }
+
+         );
+
      }
  </script>
  </body>

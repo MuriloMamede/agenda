@@ -73,13 +73,16 @@
 
     var db = firebase.firestore();
     function login(){
+        console.log(document.getElementById('usuario').value);
+        console.log(document.getElementById('senha').value);
 
         db.collection("usuarios").where("nome", "==", document.getElementById('usuario').value).where("senha", "==", document.getElementById('senha').value)
             .get()
             .then(function(querySnapshot) {
                 querySnapshot.forEach(function(doc) {
                     // doc.data() is never undefined for query doc snapshots
-                    console.log(doc.id, " => ", doc.data());
+                    localStorage.setItem('user', JSON.stringify(doc.data()))
+                    document.location.href = './home.html';
                 });
             })
             .catch(function(error) {

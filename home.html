@@ -10,15 +10,49 @@
           
           
           <li class="next"><img src="../agenda/icons/cron.png" alt="" width="100" height="100"></li>
-          <li>
-            <span style="font-size:50px">&#10096;  </span><span style="font-size:45px">OUTUBRO</span><span style="font-size:50px">  &#10097;</span> <br>
+          <li><p id="user_name"> <p>
+            <span style="font-size:50px">&#10096;  </span><span style="font-size:45px" id="mes">OUTUBRO</span><span style="font-size:50px">  &#10097;</span> <br>
             <span style="font-size:18px">2020</span>
           </li>
         </ul>
       </div>
-      
-    
-      <table style="width:100%">
+
+    <div id ="dias">
+
+    </div>
+    <script>
+      var user = null;
+      var diaDaSemanaQueOMesComeca = 5;
+      var mes = 9;
+      var diasNosMeses = [31,28,31,30,31, 30,31,31,30,31,30,31];
+      var meses = ['Janeiro',
+        'Fevereiro',
+        'Março',
+        'Abril',
+        'Maio',
+        'Junho',
+        'Julho',
+        'Agosto',
+        'Setembro',
+        'Outubro',
+        'Novembro',
+        'Dezembro'];
+
+      window.onload = function() {
+        init();
+      };
+
+      function init() {
+        user = JSON.parse(localStorage.getItem('user'));
+        document.getElementById('user_name').innerHTML = 'Olá, ' +user.nome+' esse é o seu mes de ';
+        document.getElementById('mes').innerHTML = meses[mes].toUpperCase();
+        preencheDias();
+      }
+      function preencheDias() {
+        var diasNaSemana = 7;
+        var semanasNoMes = 5;
+        var diasNoMes = diasNosMeses[mes];
+        var templateTabela = `<table style="width:100%">
         <tr>
           <th class="weekdays">Dom</th>
           <th class="weekdays">Seg</th>
@@ -27,53 +61,32 @@
           <th class="weekdays">Qui</th>
           <th class="weekdays">Sex</th>
           <th class="weekdays">Sab</th>
-        </tr>
-        <tr class="days">
-          <td>27</td> 
-          <td>28</td>
-          <td>29</td>
-          <td>30</td>
-          <td>1</td>
-          <td>2</td>
-          <td>3</td>
-        </tr>
-        <tr class="days">
-          <td>4</td>
-          <td>5</td>
-          <td>6</td>
-          <td>7</td>
-          <td>8</td>
-          <td>9</td>
-          <td>10</td>
-        </tr>
-        <tr class="days">
-          <td>11</td>
-          <td>12</td>
-          <td>13</td>
-          <td>14</td>
-          <td>15</td>
-          <td>16</td>
-          <td>17</td>
-        </tr>
-        <tr class="days">
-          <td>18</td>
-          <td>19</td>
-          <td>20</td>
-          <td>21</td>
-          <td>22</td>
-          <td>23</td>
-          <td>24</td>
-        </tr>
-        <tr class="days">
-          <td>25</td>
-          <td>26</td>
-          <td>27</td>
-          <td>28</td>
-          <td>29</td>
-          <td>30</td>
-          <td>31</td> 
-        </tr>
-  
-      </table>
+        </tr>`;
+        var dia = 1;
+        for(var j = 0; j < semanasNoMes; j++) {
+
+          templateTabela+= `<tr class="days" >`
+
+            for(var i = 0; i < diasNaSemana; i++){
+              if(j == 0 && i<diaDaSemanaQueOMesComeca-1 ){
+                templateTabela+= `<td></td>`
+              }
+              else {
+                if(dia<=diasNoMes){
+                  templateTabela += `<td>` + dia + `</td>`;
+                  dia++;
+                } else {
+                  templateTabela+= `<td></td>`
+                }
+              }
+            }
+
+
+          templateTabela+= `</tr>`
+        }
+        document.getElementById('dias').innerHTML = templateTabela + `</table>`
+      }
+
+    </script>
 </body>
 </html>
