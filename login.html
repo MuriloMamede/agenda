@@ -76,7 +76,7 @@
         console.log(document.getElementById('usuario').value);
         console.log(document.getElementById('senha').value);
 
-        db.collection("usuarios").where("nome", "==", document.getElementById('usuario').value).where("senha", "==", document.getElementById('senha').value)
+        db.collection("usuarios").where("usuario", "==", document.getElementById('usuario').value).where("senha", "==", document.getElementById('senha').value)
             .get()
             .then(function(querySnapshot) {
                 querySnapshot.forEach(function(doc) {

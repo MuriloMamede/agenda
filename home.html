@@ -11,7 +11,7 @@
           
           <li class="next"><img src="../agenda/icons/cron.png" alt="" width="100" height="100"></li>
           <li><p id="user_name"> <p>
-            <span style="font-size:50px">&#10096;  </span><span style="font-size:45px" id="mes">OUTUBRO</span><span style="font-size:50px">  &#10097;</span> <br>
+            <span style="font-size:50px">&#10096;  </span><span style="font-size:45px" id="mes">OUTUBRO</span><span style="font-size:50px" onclick="imprimir()">  &#10097;</span> <br>
             <span style="font-size:18px">2020</span>
           </li>
         </ul>
@@ -21,6 +21,7 @@
 
     </div>
     <script>
+      
       var user = null;
       var diaDaSemanaQueOMesComeca = 5;
       var mes = 9;
@@ -87,6 +88,9 @@
         document.getElementById('dias').innerHTML = templateTabela + `</table>`
       }
 
+      function imprimir(){
+        console.log('imprimiu');
+      }
     </script>
 </body>
 </html>
