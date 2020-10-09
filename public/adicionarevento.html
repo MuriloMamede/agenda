@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <link rel="stylesheet" type="text/css" href="css/home.css">
+    <link rel="stylesheet" type="text/css" href="home.css">
     <meta charset="UTF-8">
-    <link rel="stylesheet" href="css/bulma.min.css" />
-    <link rel="stylesheet" type="text/css" href="css/login.css">
+    <link rel="stylesheet" href="bulma.min.css" />
+    <link rel="stylesheet" type="text/css" href="login.css">
 </head>
 <body>
 <div class="month">
@@ -55,6 +55,39 @@
 <script src="script_meses.js"></script>
 
 <script>
+    var firebaseConfig = {
+        apiKey: "AIzaSyBMasMxL8BhY9OSyNkAmMZqfMtSlaYDEp8",
+        authDomain: "weebdario.firebaseapp.com",
+        databaseURL: "https://weebdario.firebaseio.com",
+        projectId: "weebdario",
+        storageBucket: "weebdario.appspot.com",
+        messagingSenderId: "742261135078",
+        appId: "1:742261135078:web:67e5be9399087e69efcd27"
+    };
+
+
+    var user = {};
+
+    var mes = new Date().getMonth();
+    var diaDaSemanaQueOMesComeca = new Date(2020, mes,1).getDay();
+    var diasNosMeses = [31,28,31,30,31, 30,31,31,30,31,30,31];
+    var meses = ['Janeiro',
+        'Fevereiro',
+        'Março',
+        'Abril',
+        'Maio',
+        'Junho',
+        'Julho',
+        'Agosto',
+        'Setembro',
+        'Outubro',
+        'Novembro',
+        'Dezembro'];
+    function getUser() {
+        return JSON.parse(localStorage.getItem('user'));
+    }
+
+
     // Your web app's Firebase configuration
     window.onload = function() {
         init();
@@ -111,20 +144,9 @@
                 document.location.href = './home.html';
             }
         );
-        user = getUser();
-        db.collection("usuarios").where("id", "==", user.id)
-            .get()
-            .then(function(querySnapshot) {
-                querySnapshot.forEach(function(doc) {
-                    // doc.data() is never undefined for query doc snapshots
-                    user = doc.data();
-                    user.eventos.push(evento.id);
-                    db.collection('usuarios').doc(user.id).update(user);
-                });
-            })
-            .catch(function(error) {
-                console.log("Error getting documents: ", error);
-            });
+        if(user.eventos)
+            user.eventos.push(evento.id);
+        db.collection('usuarios').doc(user.id).update(user);
     }
 </script>
 </body>

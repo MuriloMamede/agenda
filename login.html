@@ -59,36 +59,25 @@
 <script src="https://www.gstatic.com/firebasejs/7.22.1/firebase-analytics.js"></script>
 <script src="https://www.gstatic.com/firebasejs/7.22.1/firebase-auth.js"></script>
 <script src="https://www.gstatic.com/firebasejs/7.22.1/firebase-firestore.js"></script>
+<script src="script_meses.js"></script>
 <script>
-    var firebaseConfig = {
-        apiKey: "AIzaSyBMasMxL8BhY9OSyNkAmMZqfMtSlaYDEp8",
-        authDomain: "weebdario.firebaseapp.com",
-        databaseURL: "https://weebdario.firebaseio.com",
-        projectId: "weebdario",
-        storageBucket: "weebdario.appspot.com",
-        messagingSenderId: "742261135078",
-        appId: "1:742261135078:web:67e5be9399087e69efcd27"
-    };
-    firebase.initializeApp(firebaseConfig);
 
+    firebase.initializeApp(firebaseConfig);
     var db = firebase.firestore();
     function login(){
-        console.log(document.getElementById('usuario').value);
-        console.log(document.getElementById('senha').value);
-
         db.collection("usuarios").where("usuario", "==", document.getElementById('usuario').value).where("senha", "==", document.getElementById('senha').value)
             .get()
             .then(function(querySnapshot) {
                 querySnapshot.forEach(function(doc) {
                     // doc.data() is never undefined for query doc snapshots
-                    localStorage.setItem('user', JSON.stringify(doc.data()))
+                    user = JSON.stringify(doc.data());
+                    localStorage.setItem('user', user );
                     document.location.href = './home.html';
                 });
             })
             .catch(function(error) {
                 console.log("Error getting documents: ", error);
             });
-
     }
 </script>
 

@@ -1,15 +1,15 @@
 <html>
 <head>
-    <link rel="stylesheet" type="text/css" href="css/home.css">
+    <link rel="stylesheet" type="text/css" href="home.css">
 
 </head>
 <body>
     <div class="month">      
         <ul>
-          <li class="prev"><img src="../agenda/icons/agenda-icon.png" alt="" width="100" height="100"></li>
+          <li class="prev"><img src="agenda-icon.png" alt="" width="100" height="100"></li>
 
 
-            <li class="next"><img src="../agenda/icons/cron.png" alt="" width="100" height="100"></li>
+            <li class="next"><img src="cron.png" alt="" width="100" height="100"></li>
           <li><p id="user_name"> <p>
             <span style="font-size:50px" onclick="irParaOMesAnterior()">&#10096;  </span>
               <span style="font-size:45px" id="mes"></span>
@@ -30,32 +30,51 @@
     <script src="script_meses.js"></script>
 
     <script>
+        var firebaseConfig = {
+            apiKey: "AIzaSyBMasMxL8BhY9OSyNkAmMZqfMtSlaYDEp8",
+            authDomain: "weebdario.firebaseapp.com",
+            databaseURL: "https://weebdario.firebaseio.com",
+            projectId: "weebdario",
+            storageBucket: "weebdario.appspot.com",
+            messagingSenderId: "742261135078",
+            appId: "1:742261135078:web:67e5be9399087e69efcd27"
+        };
+
+
+        var user = {};
+
+        var mes = new Date().getMonth();
+        var diaDaSemanaQueOMesComeca = new Date(2020, mes,1).getDay();
+        var diasNosMeses = [31,28,31,30,31, 30,31,31,30,31,30,31];
+        var meses = ['Janeiro',
+            'Fevereiro',
+            'Março',
+            'Abril',
+            'Maio',
+            'Junho',
+            'Julho',
+            'Agosto',
+            'Setembro',
+            'Outubro',
+            'Novembro',
+            'Dezembro'];
+        function getUser() {
+            return JSON.parse(localStorage.getItem('user'));
+        }
+
+
         firebase.initializeApp(firebaseConfig);
         var db = firebase.firestore();
         var listaEventos = [];
       window.onload = function() {
-          updateUser();
+        init();
       };
 
       function init() {
+        user = getUser();
         recuperarEventos();
         document.getElementById('user_name').innerHTML = 'Olá, ' +user.nome+' esse é o seu mes de ';
         document.getElementById('mes').innerHTML = meses[mes].toUpperCase();
-      }
-      function updateUser(){
-          user = getUser();
-          db.collection("usuarios").where("id", "==", user.id)
-              .get()
-              .then(function(querySnapshot) {
-                  querySnapshot.forEach(function(doc) {
-                      // doc.data() is never undefined for query doc snapshots
-                      user = doc.data();
-                      init()
-                  });
-              })
-              .catch(function(error) {
-                  console.log("Error getting documents: ", error);
-              });
       }
       function preencheDias() {
           var temEventoEsseMes = false;
@@ -89,19 +108,19 @@
                 templateTabela+= `<td></td>`
               }
               else {
-                if(dia<=diasNoMes){
-                    var adicionar = true;
-                    for(let [diaDoEvento, posicaoNoVetor] of Object.entries(diasDeEvento)){
-                        if(diaDoEvento == dia){
-                            templateTabela += `<td>` + dia + `<br><span style="font-size:12px">` +listaEventos[posicaoNoVetor].titulo +  `</span></td>`;
-                            adicionar = false
-                        }
-                    }
-                    if(adicionar)
-                        templateTabela += `<td>` + dia + `</td>`;
+                  if(dia<=diasNoMes){
+                      var adicionar = true;
+                      for(let [diaDoEvento, posicaoNoVetor] of Object.entries(diasDeEvento)){
+                          if(diaDoEvento == dia){
+                              templateTabela += `<td>` + dia + `<br><span style="font-size:12px">` +listaEventos[posicaoNoVetor].titulo +  `</span></td>`;
+                              adicionar = false
+                          }
+                      }
+                      if(adicionar)
+                          templateTabela += `<td>` + dia + `</td>`;
 
-                  dia++;
-                } else {
+                      dia++;
+                  }  else {
                   templateTabela+= `<td></td>`
                 }
               }
@@ -126,25 +145,25 @@
           }
       }
 
-      function recuperarEventos(){
-          if(user.eventos[0]){
-              db.collection("eventos").where('id', 'in', user.eventos)
-                  .get()
-                  .then(function(querySnapshot) {
-                      querySnapshot.forEach(function(doc) {
-                              // doc.data() is never undefined for query doc snapshots
-                              listaEventos.push(doc.data())
-                          }
-                      );
-                      preencheDias();
-                  })
-                  .catch(function(error) {
-                      console.log("Error getting documents: ", error);
-                  });
-          }else{
-              preencheDias();
-          }
-      }
+        function recuperarEventos(){
+            if(user.eventos[0]){
+                db.collection("eventos").where('id', 'in', user.eventos)
+                    .get()
+                    .then(function(querySnapshot) {
+                        querySnapshot.forEach(function(doc) {
+                                // doc.data() is never undefined for query doc snapshots
+                                listaEventos.push(doc.data())
+                            }
+                        );
+                        preencheDias();
+                    })
+                    .catch(function(error) {
+                        console.log("Error getting documents: ", error);
+                    });
+            }else{
+                preencheDias();
+            }
+        }
 
     </script>
 </body>
