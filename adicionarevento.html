@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" type="text/css" href="css/home.css">
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="css/bulma.min.css" />
+    <link rel="stylesheet" type="text/css" href="css/login.css">
+</head>
+<body>
+<div class="month">
+    <ul>
+        <li onclick="adicionarEvento()" class="prev"><img src="../agenda/icons/agenda-icon.png" alt="" width="100" height="100"></li>
+        <p><a class="prev" href="home.html">Voltar para o calendario</a></p>
+        <li class="next"><img src="../agenda/icons/cron.png" alt="" width="100" height="100"></li>
+        <li><p id="user_name"> <p>
+            <span style="font-size:50px">&#10096;  </span><span style="font-size:45px" id="mes">OUTUBRO</span><span style="font-size:50px" onclick="imprimir()">  &#10097;</span> <br>
+            <span style="font-size:18px">2020</span>
+        </li>
+    </ul>
+</div>
+<div class="box">
+    <!-- <form> -->
+    <div class="field">
+        <div class="control">
+            <input id="dia" type="text" class="input is-large" placeholder="Dia" autofocus>
+        </div>
+    </div>
+    <div class="field">
+        <div class="control">
+            <input id="meszinho" type="text" class="input is-large" placeholder="Mês">
+        </div>
+    </div>
+    <div class="field">
+        <div class="control">
+            <input id="titulo" class="input is-large" type="text" placeholder="Titulo do Evento">
+        </div>
+    </div>
+    <div class="field">
+        <div class="control">
+            <input id="descricao" class="input is-large" type="text" placeholder="Descrição do evento">
+        </div>
+    </div>
+    <button onclick="validar()" class="button is-block is-link is-large is-fullwidth">Adicionar o evento a agenda!</button>
+    <!-- </form> -->
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/7.2.3/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/7.2.3/firebase-firestore.js"></script>
+<script src="https://www.gstatic.com/firebasejs/3.1.0/firebase-database.js"></script>
+<script>
+    // Your web app's Firebase configuration
+    var firebaseConfig = {
+        apiKey: "AIzaSyBMasMxL8BhY9OSyNkAmMZqfMtSlaYDEp8",
+        authDomain: "weebdario.firebaseapp.com",
+        databaseURL: "https://weebdario.firebaseio.com",
+        projectId: "weebdario",
+        storageBucket: "weebdario.appspot.com",
+        messagingSenderId: "742261135078",
+        appId: "1:742261135078:web:67e5be9399087e69efcd27"
+    };
+    firebase.initializeApp(firebaseConfig);
+
+    var db = firebase.firestore();
+    var event = {};
+    function validar() {
+        event.dia = document.getElementById('dia').value;
+        event.meszinho = document.getElementById('meszinho').value;
+        event.titulo = document.getElementById('titulo').value;
+        event.descricao = document.getElementById('descricao').value;
+        event.id = makeid();
+        registrar()
+    }
+    function makeid() {
+        var text = "";
+        var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
+        for (var i = 0; i < 5; i++)
+            text += possible.charAt(Math.floor(Math.random() * possible.length));
+
+        return text;
+    }
+    function registrar(){
+        db.collection('eventos').doc(user.id).set(user).then(
+            function () {
+                document.location.href = './home.html';
+            }
+
+        );
+
+    }
+</script>
+</body>
+</html>
