@@ -1,0 +1,99 @@
+<html>
+<head>
+    <link rel="stylesheet" type="text/css" href="css/home.css">
+    <link rel="stylesheet" href="css/bootstrap.min.css" >
+    <title>Seu dia</title>
+</head>
+<body>
+    <div class="month">      
+        <ul>
+          <li class="prev"><img src="../agenda/icons/agenda-icon.png" alt="" width="100" height="100"></li>
+
+
+            <li class="next"><img src="../agenda/icons/cron.png" alt="" width="100" height="100"></li>
+          <li><p id="user_name"> <p>
+            <span style="font-size:50px" onclick="irParaOMesAnterior()">&#10096;  </span>
+              <span style="font-size:45px" id="mes"></span>
+              <span style="font-size:50px" onclick="irParaOProximoMes()">  &#10097;</span><br>
+
+            <span style="font-size:18px">2020</span>
+          </li>
+        </ul>
+        <span style="font-size:18px;" ><a class="prev" href="home.html">Voltar para o calendario</a></span>
+      </div>
+
+
+    <div id="dias"></div>
+
+
+    <script src="https://www.gstatic.com/firebasejs/7.22.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.22.1/firebase-analytics.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.22.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.22.1/firebase-firestore.js"></script>
+    <script src="script_meses.js"></script>
+
+    <script>
+    firebase.initializeApp(firebaseConfig);
+    var db = firebase.firestore();
+      window.onload = function() {
+          updateUser();
+      };
+      var eventos = JSON.parse(localStorage.getItem('eventos'));
+
+      function init() {
+        document.getElementById('user_name').innerHTML = 'Olá, ' +user.nome+' esse é o seu mes de ';
+        document.getElementById('mes').innerHTML = meses[mes].toUpperCase();
+        console.log(eventos);
+        mostrarEventos();
+      }
+      function mostrarEventos(){
+          for(const [i,evento] of Object.entries(eventos)){
+              document.getElementById('dias').innerHTML += `
+<div class="card" style="width: 50rem; margin: 0px auto">
+        <div class="card-body">
+            <h5 class="card-title">${evento.titulo}</h5>
+            <h6 class="card-subtitle mb-2 text-muted">${evento.horario}</h6>
+            <p class="card-text">${evento.descricao}</p>
+            <button class="btn-primary" onclick="editarevento('${i}')" class="card-link">Editar Evento</button>
+            <button class="btn-secondary" onclick="apagarevento('${evento.id}')" class="card-link">Apagar Evento</button>
+
+<!--            <a href="#" class="card-link">Another link</a>-->
+        </div>
+    </div>
+          `
+          }
+      }
+    user = getUser();
+    function apagarevento(id){
+          db.collection("eventos").doc(id).delete().then(function (){
+                  document.location.href = './home.html';
+              }
+          );
+        user.eventos = user.eventos.filter(e => e !== id);
+          db.collection('usuarios').doc(user.id).update(user);
+    }
+    function editarevento(posicao){
+          localStorage.setItem('evento', JSON.stringify(eventos[posicao]));
+        document.location.href = './adicionarevento.html';
+    }
+
+      function updateUser(){
+
+          db.collection("usuarios").where("id", "==", user.id)
+              .get()
+              .then(function(querySnapshot) {
+                  querySnapshot.forEach(function(doc) {
+                      // doc.data() is never undefined for query doc snapshots
+                      user = doc.data();
+                      init()
+                  });
+              })
+              .catch(function(error) {
+                  console.log("Error getting documents: ", error);
+              });
+      }
+
+
+    </script>
+</body>
+</html>

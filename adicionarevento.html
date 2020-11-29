@@ -5,6 +5,9 @@
     <meta charset="UTF-8">
     <link rel="stylesheet" href="css/bulma.min.css" />
     <link rel="stylesheet" type="text/css" href="css/login.css">
+    <link rel="stylesheet" href="css/bootstrap.min.css" >
+    <title>Cadastro de eventos</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 </head>
 <body>
 <div class="month">
@@ -15,14 +18,14 @@
         <li><p id="user_name"> <p>
             <span style="font-size:50px">&#10096;  </span><span style="font-size:45px" id="mes"></span><span style="font-size:50px" onclick="imprimir()">  &#10097;</span>
             <br>
-            <span style="font-size:18px;" ><a class="prev" href="home.html">Voltar para o calendario</a></span>
-            <span style="font-size:18px">2020</span>
 
+            <span style="font-size:18px">2020</span>
+            <span style="font-size:18px;" ><a class="prev" href="home.html">Voltar para o calendario</a></span>
         </li>
     </ul>
 </div>
 <div class="box">
-    <!-- <form> -->
+     <form id="myForm">
     <div class="field">
         <div class="control">
             <select id="dia" class="input is-large">
@@ -37,16 +40,24 @@
     </div>
     <div class="field">
         <div class="control">
-            <input id="titulo" class="input is-large" type="text" placeholder="Titulo do Evento">
+            <input id="titulo" class="input is-large" type="text" placeholder="Titulo do Evento" required>
         </div>
     </div>
     <div class="field">
         <div class="control">
-            <input id="descricao" class="input is-large" type="text" placeholder="Descrição do evento">
+            <input id="descricao" class="input is-large" type="text" placeholder="Descrição do evento" required>
         </div>
     </div>
-    <button onclick="validar()" class="button is-block is-link is-large is-fullwidth">Adicionar o evento a agenda!</button>
-    <!-- </form> -->
+
+    <div class="field t" >
+        <h4 >Selecione o Horario</h4>
+        <div class="control">
+            <input type="time" id="horario" class="form-control" placeholder="Selecione o Horario" required>
+        </div>
+    </div>
+     </form>
+    <button onclick="validar()"   class="button is-block is-link is-large is-fullwidth" id="botaoAdd">Adicionar o evento a agenda!</button>
+
 </div>
 
 <script src="https://www.gstatic.com/firebasejs/7.2.3/firebase-app.js"></script>
@@ -60,7 +71,18 @@
         init();
     };
 
+    var edicao = false;
     function init() {
+        if(localStorage.getItem('evento')){
+            edicao = true;
+            evento = JSON.parse(localStorage.getItem('evento'));
+            // document.getElementById('dia').value = evento.dia;
+
+            document.getElementById('mes_input').value = evento.mes ;
+            document.getElementById('titulo').value  = evento.titulo;
+            document.getElementById('descricao').value  = evento.descricao;
+            document.getElementById('horario').value  = evento.horario;
+        }
         user = getUser();
         document.getElementById('mes').innerHTML = meses[mes].toUpperCase();
         document.getElementById('mes_input').value = meses[mes].toUpperCase();
@@ -72,15 +94,23 @@
         for(var i = 1; i<=diasNosMeses[mes]; i++){
             document.getElementById('dia').innerHTML+= `<option value="`+i+`">`+i+`</option>`
         }
+        if(edicao){
+            document.getElementById('dia').selectedIndex = evento.dia -1;
+        }
     }
 
     function popularMeses(){
         for(var i = 0; i<meses.length; i++){
             if( i == mes){
-                document.getElementById('mes_input').innerHTML+= `<option value="`+i+`" selected>`+meses[i]+`</option>`
+                document.getElementById('mes_input').innerHTML+= `<option value="`+i+`" >`+meses[i]+`</option>`
             }else{
                 document.getElementById('mes_input').innerHTML+= `<option value="`+i+`">`+meses[i]+`</option>`
             }
+        }
+        if(edicao){
+            document.getElementById('mes_input').selectedIndex = evento.mes;
+        } else {
+            document.getElementById('mes_input').selectedIndex = mes;
         }
     }
     firebase.initializeApp(firebaseConfig);
@@ -88,13 +118,23 @@
     var db = firebase.firestore();
     var evento = {};
     function validar() {
+
         evento.dia = document.getElementById('dia').value;
         evento.mes = document.getElementById('mes_input').value;
         evento.titulo = document.getElementById('titulo').value;
         evento.descricao = document.getElementById('descricao').value;
+        evento.horario = document.getElementById('horario').value;
         evento.userId = user.id;
-        evento.id = makeid();
-        registrar()
+        if(!edicao){
+            evento.id = makeid();
+        }
+        if(!document.getElementById('dia').value ||!document.getElementById('mes_input').value ||!document.getElementById('titulo').value ||!document.getElementById('horario').value) {
+            alert('CAMPOS NAO FORAM PREENCHIDOS');
+            document.getElementById("myForm").submit();
+        }else{
+            registrar();
+        }
+        // registrar()
     }
     function makeid() {
         var text = "";
@@ -106,25 +146,37 @@
         return text;
     }
     function registrar(){
-        db.collection('eventos').doc(evento.id).set(evento).then(
-            function () {
-                document.location.href = './home.html';
-            }
-        );
+        if(edicao){
+            console.log(evento.id);
+            db.collection('eventos').doc(evento.id).set(evento).then(
+                function () {
+                    document.location.href = './home.html';
+                }
+            );
+        }else{
+            db.collection('eventos').doc(evento.id).set(evento).then(
+                function () {
+                    document.location.href = './home.html';
+                }
+            );
+        }
+
         user = getUser();
-        db.collection("usuarios").where("id", "==", user.id)
-            .get()
-            .then(function(querySnapshot) {
-                querySnapshot.forEach(function(doc) {
-                    // doc.data() is never undefined for query doc snapshots
-                    user = doc.data();
-                    user.eventos.push(evento.id);
-                    db.collection('usuarios').doc(user.id).update(user);
+        if(!edicao){
+            db.collection("usuarios").where("id", "==", user.id)
+                .get()
+                .then(function(querySnapshot) {
+                    querySnapshot.forEach(function(doc) {
+                        // doc.data() is never undefined for query doc snapshots
+                        user = doc.data();
+                        user.eventos.push(evento.id);
+                        db.collection('usuarios').doc(user.id).update(user);
+                    });
+                })
+                .catch(function(error) {
+                    console.log("Error getting documents: ", error);
                 });
-            })
-            .catch(function(error) {
-                console.log("Error getting documents: ", error);
-            });
+        }
     }
 </script>
 </body>

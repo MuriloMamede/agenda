@@ -1,6 +1,9 @@
 <html>
 <head>
     <link rel="stylesheet" type="text/css" href="css/home.css">
+    <link rel="stylesheet" href="css/bootstrap.min.css" >
+    <title>WEEBdario</title>
+
 
 </head>
 <body>
@@ -11,11 +14,12 @@
 
             <li class="next"><img src="../agenda/icons/cron.png" alt="" width="100" height="100"></li>
           <li><p id="user_name"> <p>
-            <span style="font-size:50px" onclick="irParaOMesAnterior()">&#10096;  </span>
+            <a><span style="font-size:50px" onclick="irParaOMesAnterior()">&#10096;  </span></a>
               <span style="font-size:45px" id="mes"></span>
-              <span style="font-size:50px" onclick="irParaOProximoMes()">  &#10097;</span>
-              <p><a class="prev" href="adicionarevento.html">Adicionar Evento</a></p><br>
+              <a><span style="font-size:50px" onclick="irParaOProximoMes()">  &#10097;</span></a><br>
+
             <span style="font-size:18px">2020</span>
+              <p><a class="prev" href="adicionarevento.html">Adicionar Evento</a></p>
           </li>
         </ul>
       </div>
@@ -38,10 +42,12 @@
       };
 
       function init() {
+          localStorage.removeItem('evento');
         recuperarEventos();
         document.getElementById('user_name').innerHTML = 'Olá, ' +user.nome+' esse é o seu mes de ';
         document.getElementById('mes').innerHTML = meses[mes].toUpperCase();
       }
+
       function updateUser(){
           user = getUser();
           db.collection("usuarios").where("id", "==", user.id)
@@ -57,9 +63,18 @@
                   console.log("Error getting documents: ", error);
               });
       }
+
+
+
+        function filtraPeloDia(value) {
+          console.log(_dia);
+            return value.dia == _dia;
+        }
+        var _dia;
       function preencheDias() {
           var temEventoEsseMes = false;
           var diasDeEvento = {};
+
           for(let i = 0; i < listaEventos.length; i++){
               evento = listaEventos[i];
               if (evento.mes.toString() === mes.toString()){
@@ -93,12 +108,13 @@
                     var adicionar = true;
                     for(let [diaDoEvento, posicaoNoVetor] of Object.entries(diasDeEvento)){
                         if(diaDoEvento == dia){
-                            templateTabela += `<td>` + dia + `<br><span style="font-size:12px">` +listaEventos[posicaoNoVetor].titulo +  `</span></td>`;
+                            templateTabela += `<td onclick="irParaResumo(${dia})" onmouseover="brilha(${dia})"  onmouseleave="voltou(${dia})" id="${dia}">` + dia + `<br><span style="font-size:12px" >`
+                                + listaEventos[posicaoNoVetor].titulo +  `</span></td>`;
                             adicionar = false
                         }
                     }
                     if(adicionar)
-                        templateTabela += `<td>` + dia + `</td>`;
+                        templateTabela += `<td onmouseover="brilha(${dia})"  onmouseleave="voltou(id)" id="${dia}">` + dia + `</td>`;
 
                   dia++;
                 } else {
@@ -118,12 +134,27 @@
           diaDaSemanaQueOMesComeca = new Date(2020, mes,1).getDay();
         init();
       }
+      function brilha(id){
+          document.getElementById(id).style.background = 'Aqua';
+        }
+        function voltou(id){
+            document.getElementById(id).style.background = 'rgb(238, 238, 238)'
+        }
+
       function irParaOMesAnterior() {
           if(mes>9){
               mes--;
               diaDaSemanaQueOMesComeca = new Date(2020, mes,1).getDay();
               init();
           }
+      }
+
+      function irParaResumo(dia) {
+        _dia = dia;
+        var lista = listaEventos.filter(filtraPeloDia);
+        eventos = JSON.stringify(lista);
+        localStorage.setItem('eventos', eventos );
+        document.location.href = './resumoDia.html';
       }
 
       function recuperarEventos(){
