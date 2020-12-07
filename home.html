@@ -138,7 +138,7 @@
             mes=0;
             ano++;
         }
-        diaDaSemanaQueOMesComeca = new Date(2020, mes,1).getDay();
+        diaDaSemanaQueOMesComeca = new Date(ano, mes,1).getDay();
         init();
       }
       function brilha(id){
@@ -154,6 +154,8 @@
               mes = 11;
               ano--;
           }
+          diaDaSemanaQueOMesComeca = new Date(ano, mes,1).getDay();
+
           init();
       }
 
