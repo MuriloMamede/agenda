@@ -14,6 +14,7 @@ var firebaseConfig = {
 var user = {};
 
 var mes = new Date().getMonth();
+var ano = new Date().getFullYear();
 var diaDaSemanaQueOMesComeca = new Date(2020, mes,1).getDay();
 var diasNosMeses = [31,28,31,30,31, 30,31,31,30,31,30,31];
 var meses = ['Janeiro',

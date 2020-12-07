@@ -18,7 +18,7 @@
               <span style="font-size:45px" id="mes"></span>
               <a><span style="font-size:50px" onclick="irParaOProximoMes()">  &#10097;</span></a><br>
 
-            <span style="font-size:18px">2020</span>
+            <span style="font-size:18px" id="ano"></span>
               <p><a class="prev" href="adicionarevento.html">Adicionar Evento</a></p>
           </li>
         </ul>
@@ -45,7 +45,10 @@
           localStorage.removeItem('evento');
         recuperarEventos();
         document.getElementById('user_name').innerHTML = 'Olá, ' +user.nome+' esse é o seu mes de ';
+
         document.getElementById('mes').innerHTML = meses[mes].toUpperCase();
+        document.getElementById('ano').innerText = ano;
+
       }
 
       function updateUser(){
@@ -131,7 +134,11 @@
 
       function irParaOProximoMes(){
         mes++;
-          diaDaSemanaQueOMesComeca = new Date(2020, mes,1).getDay();
+        if(mes>=12){
+            mes=0;
+            ano++;
+        }
+        diaDaSemanaQueOMesComeca = new Date(2020, mes,1).getDay();
         init();
       }
       function brilha(id){
@@ -142,11 +149,12 @@
         }
 
       function irParaOMesAnterior() {
-          if(mes>9){
-              mes--;
-              diaDaSemanaQueOMesComeca = new Date(2020, mes,1).getDay();
-              init();
+          mes--;
+          if(mes<=1){
+              mes = 11;
+              ano--;
           }
+          init();
       }
 
       function irParaResumo(dia) {
